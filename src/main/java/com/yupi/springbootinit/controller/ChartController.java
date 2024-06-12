@@ -406,7 +406,7 @@ public class ChartController {
         chart.setChartData(csvData);
         chart.setChartType(chartType);
 
-        chart.setStatus("wait");
+        chart.setStatus("");
         chart.setUserId(loginUser.getId());
         boolean savaResult = chartService.save(chart);
         ThrowUtils.throwIf(!savaResult, ErrorCode.SYSTEM_ERROR, "图表保存失败");
