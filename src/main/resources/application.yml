@@ -1,6 +1,15 @@
 # 公共配置文件
-
 spring:
+  data:
+    mongodb:
+      uri: mongodb://root:000000@127.0.0.1:27017/biitem?authSource=admin
+      #uri等同于下面的配置
+      #database: test
+      #host: 192.168.65.174
+      #port: 27017
+      #username: fox
+      #password: fox
+      #authentication-database: admin
   application:
     name: yubi-backend
   # 默认 dev 环境
