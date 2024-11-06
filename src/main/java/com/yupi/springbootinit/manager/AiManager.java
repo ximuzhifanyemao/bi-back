@@ -70,6 +70,7 @@ public class AiManager {
                 // 指定请求版本，默认使用最新2.0版本
                 .apiVersion(SparkApiVersion.V3_5)
                 .build();
+
         // 同步调用
         SparkSyncChatResponse chatResponse = sparkClient.chatSync(sparkRequest);
         String responseContent = chatResponse.getContent();
