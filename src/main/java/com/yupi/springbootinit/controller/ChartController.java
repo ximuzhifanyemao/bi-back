@@ -15,9 +15,9 @@ import com.yupi.springbootinit.exception.BusinessException;
 import com.yupi.springbootinit.exception.ThrowUtils;
 import com.yupi.springbootinit.manager.AiManager;
 import com.yupi.springbootinit.manager.RedisLimiterManager;
+import com.yupi.springbootinit.mapper.ChartMapper;
 import com.yupi.springbootinit.model.dto.chart.*;
 import com.yupi.springbootinit.model.entity.Chart;
-import com.yupi.springbootinit.model.entity.MongoChart;
 import com.yupi.springbootinit.model.entity.User;
 import com.yupi.springbootinit.model.vo.BiResponse;
 import com.yupi.springbootinit.service.ChartService;
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,9 +49,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ChartController {
 
     @Resource
-    private MongoTemplate mongoTemplate;
-
-    @Resource
     private ChartService chartService;
 
     @Resource
@@ -67,6 +64,9 @@ public class ChartController {
     private RedisLimiterManager redisLimiterManager;
 
     private final static Gson GSON = new Gson();
+
+    @Autowired
+    private ChartMapper chartMapper;
 
     // region 增删改查
 
@@ -114,11 +114,13 @@ public class ChartController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
-        //    删除mongodb里面的数据
-          //  Query query = new Query(Criteria.where("").gte(10000))
-
         boolean b = chartService.removeById(id);
         return ResultUtils.success(b);
+
+//        想真正从数据库删除记录，把下面注释打开
+//        int res =  chartMapper.deleteById(id);
+//        if (res > 0) {return ResultUtils.success(true);}
+//        return ResultUtils.success(false);
     }
 
     /**
@@ -273,7 +275,7 @@ public class ChartController {
 //                "原始数据：\n"+
 //                "{csv格式的原始数据，用,作为分隔符}\n"+
 //                "请根据这两部分内容，按照以下指定格式生成内容(此外不要输出任何多余的开头，结尾，注释)\n"+
-//                "【【【【【\n"+
+//                "'【【【【【'\n"+
 //                "{前端Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n"+
 //                "】】】】】\n"+
 //                "{明确的数据分析结论，越详细越好，不要生成多余的内容}";
@@ -294,8 +296,8 @@ public class ChartController {
         String csvData =  ExcelUtils.excelToCsv(multipartFile);
         userInput.append(csvData).append("\n");
 
-        String result =  aiManager.doChat(biModelId,userInput.toString());
-        String[] splits = result.split("【【【【【");
+        String result =  aiManager.sendMsgToXingHuo(true,userInput.toString());
+        String[] splits = result.split("'【【【【【'");
         if (splits.length < 3 )
         {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "Ai 生成错误");
@@ -380,7 +382,7 @@ public class ChartController {
 //                "原始数据：\n"+
 //                "{csv格式的原始数据，用,作为分隔符}\n"+
 //                "请根据这两部分内容，按照以下指定格式生成内容(此外不要输出任何多余的开头，结尾，注释)\n"+
-//                "【【【【【\n"+
+//                "'【【【【【'\n"+
 //                "{前端Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n"+
 //                "】】】】】\n"+
 //                "{明确的数据分析结论，越详细越好，不要生成多余的内容}";
@@ -424,8 +426,8 @@ public class ChartController {
             }
             // 调用AI
 
-            String result = aiManager.doChat(biModelId, userInput.toString());
-            String[] splits = result.split("【【【【【");
+            String result = aiManager.sendMsgToXingHuo(true, userInput.toString());
+            String[] splits = result.split("'【【【【【'");
             if (splits.length < 3) {
                 handleChartUpdateError(chart.getId(), "Ai 生成错误");
             }

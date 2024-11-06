@@ -1,8 +1,8 @@
 # 公共配置文件
 spring:
-  data:
-    mongodb:
-      uri: mongodb://root:000000@127.0.0.1:27017/biitem?authSource=admin
+#  data:
+##    mongodb:
+##      uri: mongodb://root:000000@127.0.0.1:27017/biitem?authSource=admin
       #uri等同于下面的配置
       #database: test
       #host: 192.168.65.174
@@ -99,8 +99,14 @@ cos:
     region: xxx
     bucket: xxx
 #ai 配置
+## 讯飞 AI 配置
+xun-fei:
+  client:
+    appId:64eaf784
+    apiSecret:NGVlM2QxMDQ2NTU1Zjk4YjkzYjVlYjky
+    apiKey:0168e46036c2f2813029a23c5e5b9b13
+
 yuapi:
   client:
-    access-key: d39ujr1wo6bm6z0zgoctab9otum46jjd
-
-    secret-key: oxexkyczur619opbrdp0vkh517t5nz3o
+    access-key: 1ps492k7li9tyk5teazm8n98ygx2m7ea
+    secret-key: 9pu5vv32vxw2h3r2235euksagj1oqbij
